@@ -11,3 +11,4 @@ recordclass
 emoji
 yt-dlp
 bottomify
+compose

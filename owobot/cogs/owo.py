@@ -4,10 +4,12 @@ import functools as ft
 from discord.ext import commands
 from owobot.misc import owolib, common
 from owobot.misc.database import OwoChan
+from operator import methodcaller
+from compose import compose
+from functools import partial
 
 
-def contains_alpha(text: str) -> bool:
-    return all(ltr.isalpha() for ltr in text)
+contains_alpha = compose(any, partial(map, methodcaller("isalpha")))
 
 
 class OwO(commands.Cog):
