@@ -1,7 +1,7 @@
 discord.py
 catapi.py
 pygelbooru
-pyspark
+# pyspark
 plotly
 kaleido
 pandas
