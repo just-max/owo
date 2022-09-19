@@ -1,7 +1,7 @@
 discord.py == 2.0.1
 catapi.py
 pygelbooru
-pyspark
+# pyspark
 plotly
 kaleido
 pandas
