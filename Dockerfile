@@ -14,10 +14,9 @@ RUN source ./bin/activate \
     && pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir ./data/
-VOLUME ./data
-COPY ./owo.toml ./
-COPY ./owo.toml ./data/
+VOLUME /opt/owo/data
 
+COPY ./owo.toml ./
 COPY ./main.py ./
 COPY ./owobot/ ./owobot/
 
