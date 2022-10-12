@@ -21,3 +21,4 @@ cachetools
 asyncache
 yarl
 more-itertools
+python-dateutil

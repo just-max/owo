@@ -14,6 +14,7 @@ import emoji
 from discord.ext import commands
 from peewee import PeeweeException
 from owobot.misc.database import Owner
+from dateutil.parser import parse as parse_date
 from typing import List, Iterable, Optional, TypeVar, Callable, Any, overload
 
 try:
@@ -119,6 +120,16 @@ def paginate(msg, max_page_len):
             page_len += len(paragraph)
 
     return ("\n".join(page) for page in pages)
+
+
+@overload
+async def send_paginated(to: discord.abc.Messageable, msg: str, page_length=2000, **kwargs):
+    ...
+
+
+@overload
+async def send_paginated(to: discord.abc.Messageable, page_length=2000, **kwargs):
+    ...
 
 
 async def send_paginated(to: discord.abc.Messageable, *args, page_length=2000, **kwargs):
@@ -261,6 +272,11 @@ class IdentityConverter(commands.Converter):
 
 
 Variadic = Annotated[List[str], commands.Greedy[IdentityConverter]]
+
+
+class DatetimeConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context[commands.Bot], argument: str):
+        return parse_date(argument)
 
 
 def long_running_command(f):
