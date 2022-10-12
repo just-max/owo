@@ -1,6 +1,14 @@
+from __future__ import annotations
+
 import re
 
 from datetime import datetime, timezone, timedelta
+import io
+import tarfile
+from pathlib import Path, PurePosixPath
+import json
+import codecs
+from urllib.parse import urlparse
 
 import discord
 from discord.ext import commands
@@ -14,6 +22,14 @@ from typing import Iterable
 _maybe_emoji_re = re.compile("<[^<>]*>")
 
 
+def _buffer_tarinfo(name: str | Path, buffer: io.BytesIO, *, mtime: datetime = None) -> tarfile.TarInfo:
+    result = tarfile.TarInfo(name=str(name))
+    result.size = buffer.getbuffer().nbytes
+    result.type = tarfile.REGTYPE
+    result.mtime = (mtime if mtime is not None else datetime.now()).timestamp()
+    return result
+
+
 class Emojis(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -21,6 +37,35 @@ class Emojis(commands.Cog):
     @commands.hybrid_group()
     async def emoji(self, ctx: commands.Context):
         pass
+
+    @emoji.command()
+    @common.long_running_command
+    async def archive(self, ctx: commands.Context):
+        gz_buffer = io.BytesIO()
+        index = {}
+        with tarfile.open(mode="w:gz", fileobj=gz_buffer) as gz_file:
+            for emoji in ctx.guild.emojis:
+                emoji_buffer = io.BytesIO()
+                await emoji.save(emoji_buffer, seek_begin=True)
+                emoji_extension = PurePosixPath(urlparse(emoji.url).path).suffix
+                emoji_friendly_name = f"{emoji.id}_{emoji.name}{emoji_extension}"
+                gz_emoji_tarinfo = _buffer_tarinfo(f"data/{emoji_friendly_name}", emoji_buffer, mtime=emoji.created_at)
+                gz_file.addfile(gz_emoji_tarinfo, emoji_buffer)
+
+                index[emoji.id] = {
+                    "name": emoji.name,
+                    "data": emoji_friendly_name,
+                    "animated": emoji.animated
+                }
+
+            index_buffer = io.BytesIO()
+            json.dump(index, codecs.getwriter("utf-8")(index_buffer), indent=4)
+            index_buffer.seek(0)
+            gz_file.addfile(_buffer_tarinfo("index.json", index_buffer), fileobj=index_buffer)
+
+        gz_buffer.seek(0)
+        f = discord.File(gz_buffer, filename="emojis.tar.gz")
+        await ctx.send(f"exported {len(index)} emojis!", file=f)
 
     @emoji.command()
     @commands.has_permissions(manage_emojis=True)
