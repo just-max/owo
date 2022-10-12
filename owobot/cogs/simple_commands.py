@@ -8,6 +8,7 @@ import plotly.express as px
 import requests
 from discord.ext import commands
 
+from owobot.misc import discord_emoji
 from owobot.misc import common, owolib
 from owobot.owobot import OwOBot
 
@@ -101,6 +102,28 @@ class SimpleCommands(commands.Cog):
                                    "featuring simple graphics.")
     async def ping(self, ctx: commands.Context):
         await ctx.send(f":ping_pong: ping pong! (`{round(self.bot.latency * 1000)}ms`)")
+
+    @commands.hybrid_command(name="1984", brief="[redacted]")
+    async def onenineeightfour(self, ctx: commands.Context):
+        message = None
+        if ctx.message.reference:
+            message = ctx.message.reference.cached_message
+        else:
+            async for prev_msg in ctx.channel.history(before=ctx.message, limit=1):
+                message = prev_msg
+
+        if message is None:
+            await common.react_failure(ctx, "no message to react to")
+            return
+
+        if not ctx.interaction:
+            await ctx.message.delete()
+        else:
+            await ctx.reply("1984", mention_author=False, ephemeral=True)
+
+        for name in ("one", "nine", "eight", "four"):
+            await message.add_reaction(discord_emoji.get_unicode_emoji(name))
+
 
     sad_words = {"trauer", "schmerz", "leid"}
 
