@@ -161,7 +161,7 @@ async def message_as_embedded_reply(message, max_length=256):
 
     # hide the original message if it's empty (e.g. upload-only) or just a URL
     elide_message = not message.content or (
-        thumbnail is not None and thumbnail.url == message.content
+        thumbnail is not None and (thumbnail.url == message.content or discord_linkify_likely(message.content))
     )
 
     reply_embed = discord.Embed(
