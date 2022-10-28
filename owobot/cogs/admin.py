@@ -49,12 +49,12 @@ class Admin(commands.Cog):
         query = OwoChan.delete().where(RainbowGuild.snowflake == ctx.guild.id)
         await common.try_exe_cute_query(ctx, query)
 
-    @commands.hybrid_command(brief="sync slash commands to the current guild")
+    @commands.hybrid_command(brief="sync app commands to the current guild")
     async def sync(self, ctx: commands.Context):
         self.bot.tree.copy_global_to(guild=ctx.guild)
         synced = await self.bot.tree.sync(guild=ctx.guild)
         await ctx.send(
-            f"Synced {len(synced)} slash command(s) to **{ctx.guild.name}**."
+            f"Synced {len(synced)} app command(s) to **{ctx.guild.name}**."
         )
 
 

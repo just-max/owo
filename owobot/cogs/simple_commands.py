@@ -13,9 +13,17 @@ from owobot.misc import common, owolib
 from owobot.owobot import OwOBot
 
 
+async def _1984(message: discord.Message):
+    for name in ("one", "nine", "eight", "four"):
+        await message.add_reaction(discord_emoji.get_unicode_emoji(name))
+
+
 class SimpleCommands(commands.Cog):
     def __init__(self, bot: OwOBot):
         self.bot = bot
+
+    async def setup_hook(self):
+        await self._add_app_commands()
 
     @commands.hybrid_command(name="obamamedal")
     async def obamamedal(self, ctx):
@@ -104,13 +112,12 @@ class SimpleCommands(commands.Cog):
         await ctx.send(f":ping_pong: ping pong! (`{round(self.bot.latency * 1000)}ms`)")
 
     @commands.hybrid_command(name="1984", brief="[redacted]")
-    async def onenineeightfour(self, ctx: commands.Context):
-        message = None
-        if ctx.message.reference:
-            message = ctx.message.reference.cached_message
-        else:
-            async for prev_msg in ctx.channel.history(before=ctx.message, limit=1):
-                message = prev_msg
+    async def one_nine_eight_four(self, ctx: commands.Context):
+        message = (
+            ctx.message.reference.cached_message
+            if ctx.message.reference
+            else next((msg async for msg in ctx.channel.history(before=ctx.message, limit=1)), None)
+        )
 
         if message is None:
             await common.react_failure(ctx, "no message to react to")
@@ -121,9 +128,7 @@ class SimpleCommands(commands.Cog):
         else:
             await ctx.reply("1984", mention_author=False, ephemeral=True)
 
-        for name in ("one", "nine", "eight", "four"):
-            await message.add_reaction(discord_emoji.get_unicode_emoji(name))
-
+        await _1984(message)
 
     sad_words = {"trauer", "schmerz", "leid"}
 
@@ -138,6 +143,19 @@ class SimpleCommands(commands.Cog):
             send_word = random.choice(tuple(sad_words_minus))
             await message.channel.send(send_word)
 
+    async def _add_app_commands(self):
 
-def setup(bot):
-    return bot.add_cog(SimpleCommands(bot))
+        @self.bot.tree.context_menu(name="1984")
+        async def one_nine_eight_four(interaction: discord.Interaction, message: discord.Message):
+            await interaction.response.send_message("1984", ephemeral=True)
+            await _1984(message)
+
+        @self.bot.tree.context_menu(name="Steal Avatar")
+        async def steal(interaction: discord.Interaction, member: discord.Member):
+            await interaction.response.send_message(member.display_avatar.url)
+
+
+async def setup(bot: OwOBot):
+    cog = SimpleCommands(bot)
+    await cog.setup_hook()
+    await bot.add_cog(cog)
