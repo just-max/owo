@@ -6,7 +6,7 @@ import pyspark.sql.functions as F
 from recordclass import RecordClass
 from emoji import UNICODE_EMOJI_ENGLISH
 from typing import List, Dict
-from owobot.misc.common import Variadic
+from owobot.misc.common import Variadic, DISCORD_CUSTOM_EMOJI_RE
 
 
 class GalleryState(RecordClass):
@@ -33,7 +33,7 @@ class Gallery(commands.Cog):
         emotes = []
         channels = []
         for arg in args:
-            if re.match(r"<a?:[^:<>@*~]+:\d+>", arg) or arg in UNICODE_EMOJI_ENGLISH:
+            if re.match(DISCORD_CUSTOM_EMOJI_RE, arg) or arg in UNICODE_EMOJI_ENGLISH:
                 emotes.append(arg)
             elif re.match(r"<#\d+>", arg):
                 channels.append(int(re.search(r"\d+", arg).group(0)))

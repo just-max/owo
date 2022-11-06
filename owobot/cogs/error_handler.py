@@ -113,7 +113,7 @@ class ErrorHandler(commands.Cog):
                 suggestions = self.bot.suggest_commands(ctx.invoked_with)
                 await _reply_on_error(ctx, _format_suggested_commands(ctx.invoked_with, suggestions))
             return
-        if isinstance(error, commands.CommandOnCooldown):
+        if isinstance(error, (commands.CommandOnCooldown, commands.BadArgument)):
             await _reply_on_error(ctx, f"{owolib.get_random_sorry()}: {owolib.owofy(str(error))}")
             return
         log.error("unhandled exception in command", exc_info=error)

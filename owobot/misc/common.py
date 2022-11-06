@@ -12,6 +12,7 @@ import textwrap
 import discord
 import emoji
 from discord.ext import commands
+from discord.utils import escape_markdown
 from peewee import PeeweeException
 from owobot.misc.database import Owner
 from dateutil.parser import parse as parse_date
@@ -277,6 +278,23 @@ Variadic = Annotated[List[str], commands.Greedy[IdentityConverter]]
 class DatetimeConverter(commands.Converter):
     async def convert(self, ctx: commands.Context[commands.Bot], argument: str):
         return parse_date(argument)
+
+
+DISCORD_CUSTOM_EMOJI_RE = re.compile(r"<(?P<animated>a?):(?P<name>[^:<>@*~]+):(?P<id>\d+)>")
+
+
+class CustomEmojiC(commands.Converter):
+    async def convert(self, ctx: commands.Context, argument: str):
+        m = DISCORD_CUSTOM_EMOJI_RE.match(argument)
+        if not m:
+            raise commands.BadArgument(message=f"{escape_markdown(argument)} is not a custom emoji")
+        e = discord.utils.get(ctx.guild.emojis, id=int(m.group("id")))
+        if e is None:
+            raise commands.BadArgument(message=f"{escape_markdown(argument)} is not a custom emoji from this server")
+        return e
+
+
+CustomEmojiT = Annotated[discord.Emoji, CustomEmojiC]
 
 
 def long_running_command(f):

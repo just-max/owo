@@ -15,6 +15,7 @@ from discord.ext import commands
 from discord.ext.commands import param
 
 from owobot.misc import common
+from owobot.misc.common import DISCORD_CUSTOM_EMOJI_RE
 
 from typing import Iterable
 
@@ -34,11 +35,11 @@ class Emojis(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_group()
-    async def emoji(self, ctx: commands.Context):
+    @commands.hybrid_group(name="emoji")
+    async def emoji_(self, ctx: commands.Context):
         pass
 
-    @emoji.command()
+    @emoji_.command()
     @common.long_running_command
     async def archive(self, ctx: commands.Context):
         gz_buffer = io.BytesIO()
@@ -67,7 +68,7 @@ class Emojis(commands.Cog):
         f = discord.File(gz_buffer, filename="emojis.tar.gz")
         await ctx.send(f"exported {len(index)} emojis!", file=f)
 
-    @emoji.command()
+    @emoji_.command()
     @commands.has_permissions(manage_emojis=True)
     @common.long_running_command
     async def stats(
@@ -104,6 +105,11 @@ class Emojis(commands.Cog):
             for em, count in ranking
         )
         await common.send_paginated(ctx, msg if ranking else "no emojis found :<")
+
+    @emoji_.command(brief="steal an emoji")
+    @common.long_running_command
+    async def steal(self, ctx: commands.Context, emoji: common.CustomEmojiT):
+        await ctx.send(emoji.url)
 
 
 async def setup(bot: commands.Bot):
