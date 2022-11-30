@@ -1,6 +1,7 @@
 import datetime
 import io
 import random
+import re
 
 import discord
 import pandas as pd
@@ -142,6 +143,18 @@ class SimpleCommands(commands.Cog):
             sad_words_minus = self.sad_words - {word}
             send_word = random.choice(tuple(sad_words_minus))
             await message.channel.send(send_word)
+
+    _werben_pat = re.compile(r"\bwerben\b", re.IGNORECASE)
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        if message.author == self.bot.user:
+            return
+        if not SimpleCommands._werben_pat.search(message.content):
+            return
+        await message.reply(
+            "https://cdn.discordapp.com/attachments/937427217976262686/1047505652232228884/NBP5W2Z0e1.jpg"
+        )
 
     async def _add_app_commands(self):
 
