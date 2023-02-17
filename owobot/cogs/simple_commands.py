@@ -83,7 +83,7 @@ class SimpleCommands(commands.Cog):
 
     @commands.hybrid_command(brief="see how many people are at the mensa")
     async def mensa(self, ctx):
-        stats = (await self.bot.http_client.get("http://mensa.liste.party/api")).json()
+        stats = (await self.bot.http_client.get("https://mensa.liste.party/api")).json()
         await ctx.send(
             f"Gerade wuscheln {stats['current']} Menschen in der Mensa. Das ist eine Auslastung von {stats['percent']:.0f}%")
 

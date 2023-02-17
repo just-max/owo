@@ -84,7 +84,7 @@ class OwOBot(Bot):
         self._load_cogs = load_cogs
 
         # httpx client
-        self.http_client = AsyncClient()
+        self.http_client = AsyncClient(follow_redirects=True)
 
         # aiohttp server
         self.http_app = web.Application()
