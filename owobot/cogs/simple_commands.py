@@ -6,7 +6,6 @@ import re
 import discord
 import pandas as pd
 import plotly.express as px
-import requests
 from discord.ext import commands
 
 from owobot.misc import discord_emoji
@@ -84,7 +83,7 @@ class SimpleCommands(commands.Cog):
 
     @commands.hybrid_command(brief="see how many people are at the mensa")
     async def mensa(self, ctx):
-        stats = requests.get("http://mensa.liste.party/api").json()
+        stats = (await self.bot.http_client.get("http://mensa.liste.party/api")).json()
         await ctx.send(
             f"Gerade wuscheln {stats['current']} Menschen in der Mensa. Das ist eine Auslastung von {stats['percent']:.0f}%")
 
