@@ -2,6 +2,7 @@ import datetime
 import io
 import random
 import re
+import asyncio
 
 import discord
 import pandas as pd
@@ -16,6 +17,10 @@ from owobot.owobot import OwOBot
 async def _1984(message: discord.Message):
     for name in ("one", "nine", "eight", "four"):
         await message.add_reaction(discord_emoji.get_unicode_emoji(name))
+
+
+async def _buzzer(message: discord.Message):
+    await message.reply("[𝐄𝐗𝐓𝐑𝐄𝐌𝐄𝐋𝐘 𝐋𝐎𝐔𝐃 𝐈𝐍𝐂𝐎𝐑𝐑𝐄𝐂𝐓 𝐁𝐔𝐙𝐙𝐄𝐑]")
 
 
 class SimpleCommands(commands.Cog):
@@ -155,16 +160,30 @@ class SimpleCommands(commands.Cog):
             "https://cdn.discordapp.com/attachments/937427217976262686/1047505652232228884/NBP5W2Z0e1.jpg"
         )
 
+    @commands.Cog.listener(name="on_raw_reaction_add")
+    async def stroganoff(self, payload: discord.RawReactionActionEvent):
+        if (
+            not (payload.emoji.is_unicode_emoji() and payload.emoji.name == "🚨")  # new reaction is 🚨
+            or payload.user_id == self.bot.user.id  # not from bot
+        ):
+            return
+
+        msg = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+        await _buzzer(msg)
+
     async def _add_app_commands(self):
 
         @self.bot.tree.context_menu(name="1984")
         async def one_nine_eight_four(interaction: discord.Interaction, message: discord.Message):
-            await interaction.response.send_message("1984", ephemeral=True)
-            await _1984(message)
+            await asyncio.gather(interaction.response.send_message("1984", ephemeral=True), _1984(message))
 
         @self.bot.tree.context_menu(name="Steal Avatar")
         async def steal(interaction: discord.Interaction, member: discord.Member):
             await interaction.response.send_message(member.display_avatar.url)
+
+        @self.bot.tree.context_menu(name="🚨🚨🚨🚨🚨🚨🚨")
+        async def steal(interaction: discord.Interaction, message: discord.Message):
+            await asyncio.gather(interaction.response.send_message("🚨", ephemeral=True), _buzzer(message))
 
 
 async def setup(bot: OwOBot):
