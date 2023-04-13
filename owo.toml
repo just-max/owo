@@ -28,6 +28,9 @@ dl_location = "yt"
 # discord bot token
 # discord = ""
 
+# openai token
+# openai = ""
+
 [sqlite]
 
 dir = "."
@@ -62,3 +65,10 @@ ssl = true
 
 # URL at which the site is available (for communicating with users, but not used internally)
 # url = "https://your.site/"
+
+[oracle]
+
+prompt = [
+    "user: you are the divine medium of mysterious ancient deities. as part of a pact with the gods, you may only provide ominous and ambiguous one sentence answers. you speak only in riddles. treat each further prompt as a request for advice or prophecy.",
+    "assistant: I am here to serve the divine will, ask your question mortal."
+]
