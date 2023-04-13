@@ -75,6 +75,10 @@ class Config:
 
         self.catapi_token = str(self.get_key("api_tokens", "catapi"))
         self.discord_token = str(self.get_key("api_tokens", "discord"))
+        self.openai_token = str(self.get_key("api_tokens", "openai"))
+
+        if "oracle" not in self.blocked_cogs:
+            self.oracle_prompt = self.get_key("oracle", "prompt")
 
         if self.has_toplevel_key("postgres"):
             try:
