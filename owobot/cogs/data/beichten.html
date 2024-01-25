@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Beichtstuhl</title>
+   <style>
+       .confession-form {
+           width: 30em;
+           margin: 0 auto;
+           background-color: #fcfcfc;
+           padding: 20px 50px 40px;
+           box-shadow: 1px 4px 10px 1px #aaa;
+           font-family: sans-serif;
+       }
+
+       .confession-form * {
+           box-sizing: border-box;
+       }
+
+       .confession-form h2 {
+           text-align: center;
+           margin-bottom: 2em;
+       }
+
+       .confession-form input {
+           margin-bottom: 1em;
+       }
+
+       .confession-form input[type=text], .confession-form textarea {
+           display: block;
+           padding: 0.5em 1em;
+           width: 100%;
+           border: none;
+           background-color: #f3f3f3;
+       }
+
+       .confession-form input[type=text] {
+           height: 2em;
+       }
+
+       .confession-form textarea {
+           resize: vertical;
+           min-height: 8em;
+       }
+
+       .confession-form .confession-label {
+           color: #777;
+           font-size: 0.8em;
+           margin-bottom: 0.4em;
+       }
+
+       .confession-form button[type=submit] {
+           display: block;
+           margin: 1.25em auto 0;
+           width: 10em;
+           height: 2.5em;
+           border-radius: 1.5em;
+           border: none;
+           color: #eee;
+           font-weight: 700;
+
+           cursor: pointer;
+           transition: box-shadow 0.1s;
+
+           background: linear-gradient(to right, #207cca 0%, #9f58a3 100%);
+       }
+
+       .confession-form button[type=submit]:hover {
+           box-shadow: 1px 4px 10px 1px #aaa;
+       }
+
+       .confession-form button[type=submit]:active {
+           /*box-shadow: 1px 4px 10px 1px #aaa;*/
+       }
+   </style>
+</head>
+<body>
+<div class="confession-form">
+   <h2 class="header">Beichtstuhl</h2>
+   <div>
+      <form action="/api/v0/confession" method="post" target="_self">
+         <div class="confession-label"><label for="channel">Channel ID</label></div>
+         <input id="channel" type="number" required name="channel" placeholder="Channel ID">
+         <div class="confession-label"><label for="message">Message</label></div>
+         <textarea id="message" name="message" placeholder="I have a secret crush on..."></textarea>
+         <button type="submit">Beichten</button>
+      </form>
+   </div>
+</div>
+</body>
+</html>

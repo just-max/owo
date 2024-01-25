@@ -135,25 +135,6 @@ class SimpleCommands(commands.Cog):
 
         await _1984(message)
 
-    @commands.hybrid_command(brief="für dumme gedanken")
-    async def beichten(self, ctx: commands.Context, message: str):
-        if ctx.interaction is None:
-            await asyncio.gather(
-                ctx.channel.send("use `/beichten <message>` to retain your privacy"),
-                ctx.message.delete(),
-            )
-            return
-        embed = discord.Embed(description=message)
-        embed.set_author(
-            name="Beichtstuhl",
-            icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/"
-                     "St.leonhard-ffm-beichtstuhl001.jpg/647px-St.leonhard-ffm-beichtstuhl001.jpg"
-        )
-        await asyncio.gather(
-            ctx.interaction.response.send_message("the priest will respect your privacy", ephemeral=True),
-            ctx.channel.send(embed=embed, )
-        )
-
     sad_words = {"trauer", "schmerz", "leid"}
 
     @commands.Cog.listener()
